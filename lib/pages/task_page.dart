@@ -84,7 +84,22 @@ class _TaskPageState extends State<TaskPage> {
                       shrinkWrap: true,
                       itemCount: totalTask[index],
                       itemBuilder: (context, index) {
-                        return customCard(index);
+                        return DragTarget(
+                          builder: (context, candidateData, rejectedData) {
+                            return Draggable(
+                              data: customCard(index),
+                              feedback: customCard(index),
+                              childWhenDragging: Container(),
+                              child: customCard(index),
+                            );
+                          },
+                          onAccept: (Widget data) {
+                            setState(() {
+                              totalTask[index]++;
+                            });
+                          },
+                        );
+                        //customCard(index);
                       },
                     ),
                   ),
@@ -127,7 +142,7 @@ class _TaskPageState extends State<TaskPage> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Text("asdasdasd" * (index + 20)),
+            Text("asdasdasd" * (index + 5)),
             SizedBox(height: 10),
             Align(
               alignment: Alignment.bottomRight,
