@@ -1,5 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:task/model/cardModel.dart';
+import 'package:task/service/database_service.dart';
 
 class TaskPage extends StatefulWidget {
   @override
@@ -10,13 +13,20 @@ class _TaskPageState extends State<TaskPage> {
   int currentPageIndex = 1;
   int totalPageCount = 3;
   List<int> totalTask = List(3);
+  String teknikUzman = "";
+  String tahminiSure = "";
+  String gerceklesenSure = "";
+  String isinAciklamasi = "";
+  String notlar = "";
 
   @override
   void initState() {
+    super.initState();
     totalTask[0] = 0;
     totalTask[1] = 0;
     totalTask[2] = 0;
-    super.initState();
+    final response = Provider.of<DatabaseService>(context, listen: false);
+    response.open();
   }
 
   @override
@@ -84,33 +94,14 @@ class _TaskPageState extends State<TaskPage> {
                       shrinkWrap: true,
                       itemCount: totalTask[index],
                       itemBuilder: (context, index) {
-                        return DragTarget(
-                          builder: (context, candidateData, rejectedData) {
-                            return Draggable(
-                              data: customCard(index),
-                              feedback: customCard(index),
-                              childWhenDragging: Container(),
-                              child: customCard(index),
-                            );
-                          },
-                          onAccept: (Widget data) {
-                            setState(() {
-                              totalTask[index]++;
-                            });
-                          },
-                        );
-                        //customCard(index);
+                        return customCard(index);
                       },
                     ),
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: FlatButton(
-                      onPressed: () {
-                        setState(() {
-                          totalTask[index]++;
-                        });
-                      },
+                      onPressed: () => showCustomDialog(index),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -152,5 +143,100 @@ class _TaskPageState extends State<TaskPage> {
         ),
       ),
     );
+  }
+
+  showCustomDialog(int index) {
+    return showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title: Text("Add A New Card"),
+            content: Container(
+              width: double.maxFinite,
+              child: ListView.separated(
+                shrinkWrap: true,
+                separatorBuilder: (BuildContext context, int index) {
+                  return SizedBox(height: 10);
+                },
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return TextFormField(
+                    onChanged: (entered) {
+                      index == 0
+                          ? teknikUzman = entered
+                          : index == 1
+                              ? tahminiSure = entered
+                              : index == 2
+                                  ? gerceklesenSure = entered
+                                  : index == 3
+                                      ? isinAciklamasi = entered
+                                      : notlar = entered;
+                    },
+                    decoration: InputDecoration(
+                      hintText: index == 0
+                          ? "Teknik Uzman"
+                          : index == 1
+                              ? "Tahmini Süre"
+                              : index == 2
+                                  ? "Gerçekleşen Süre"
+                                  : index == 3
+                                      ? "İşin Açıklaması"
+                                      : "Notlar",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Color(0xff3daecc),
+                          )),
+                    ),
+                  );
+                },
+              ),
+            ),
+            actions: [
+              RaisedButton(
+                child: Text(
+                  "Kapat",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1),
+                ),
+                color: Colors.red,
+                onPressed: () => Navigator.pop(context),
+              ),
+              RaisedButton(
+                child: Text(
+                  "Kaydet",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1),
+                ),
+                color: Colors.lightGreen,
+                onPressed: () {
+                  /*setState(() {
+                    totalTask[index]++;
+                  });*/
+                  saveInformation();
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void saveInformation() async {
+    final response = Provider.of<DatabaseService>(context, listen: false);
+    CardModel cardModel = CardModel(
+      teknikUzman: teknikUzman,
+      tahminiSure: tahminiSure,
+      gerceklesenSure: gerceklesenSure,
+      isinAciklamasi: isinAciklamasi,
+      notlar: notlar,
+    );
+    await response.addCard(cardModel);
   }
 }
