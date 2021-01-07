@@ -13,6 +13,7 @@ class DatabaseRepository extends IDatabase {
   String columnGerceklesenSure = "gerceklesenSure";
   String columnIsinAciklamasi = "isinAciklamasi";
   String columnNotlar = "notlar";
+  String columnTaskId = "taskId";
   String columnId = "id";
 
   @override
@@ -26,9 +27,10 @@ class DatabaseRepository extends IDatabase {
     );
   }
 
-  void createTable(Database db) {
-    db.execute('''CREATE TABLE $tableName (
+  Future<void> createTable(Database db) async {
+    await db.execute('''CREATE TABLE $tableName (
             $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
+            $columnTaskId INTEGER,
             $columnTeknikUzman TEXT,
             $columnTahminiSure TEXT,
             $columnGerceklesenSure TEXT,
@@ -37,24 +39,32 @@ class DatabaseRepository extends IDatabase {
   }
 
   @override
-  Future<List<CardModel>> getCardList() async {
+  Future<List<CardModel>> getCardList(int comingTaskId) async {
     if (database != null) open();
-    List<Map> cardMaps = await database.query(tableName);
-    return cardMaps.map((e) => CardModel.fromJson(e)).toList();
+    final cardMaps = await database.query(
+      tableName,
+      where: '$columnTaskId = ?',
+      whereArgs: [comingTaskId],
+    );
+    if (cardMaps.isNotEmpty)
+      return cardMaps.map((e) => CardModel.fromJson(e)).toList();
+    else
+      return [];
   }
 
   @override
   Future<CardModel> getIdCard(int id) async {
+    print(id);
     if (database != null) open();
     final cardMaps = await database.query(
       tableName,
       where: '$columnId = ?',
-      columns: [columnId],
-      whereArgs: [id],
+      whereArgs: [id + 1],
     );
-    if (cardMaps.isNotEmpty)
+    if (cardMaps.isNotEmpty) {
+      print(cardMaps);
       return CardModel.fromJson(cardMaps.first);
-    else
+    } else
       return null;
   }
 

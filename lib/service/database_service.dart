@@ -29,9 +29,9 @@ class DatabaseService extends IDatabase {
   }
 
   @override
-  Future<List<CardModel>> getCardList() async {
+  Future<List<CardModel>> getCardList(int comingTaskId) async {
     try {
-      final result = await databaseRepository.getCardList();
+      final result = await databaseRepository.getCardList(comingTaskId);
       return result;
     } catch (e) {
       print("ViewModel getCardList hata: " + e.toString());

@@ -1,5 +1,6 @@
 class CardModel {
   int id;
+  int taskId;
   String teknikUzman;
   String tahminiSure;
   String gerceklesenSure;
@@ -8,6 +9,7 @@ class CardModel {
 
   CardModel(
       {this.id,
+      this.taskId,
       this.teknikUzman,
       this.tahminiSure,
       this.gerceklesenSure,
@@ -16,6 +18,7 @@ class CardModel {
 
   CardModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    taskId = json['taskId'];
     teknikUzman = json['teknikUzman'];
     tahminiSure = json['tahminiSure'];
     gerceklesenSure = json['gerceklesenSure'];
@@ -25,7 +28,7 @@ class CardModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
+    data['taskId'] = this.taskId;
     data['teknikUzman'] = this.teknikUzman;
     data['tahminiSure'] = this.tahminiSure;
     data['gerceklesenSure'] = this.gerceklesenSure;
