@@ -1,6 +1,6 @@
-import 'package:task/model/cardModel.dart';
-import 'package:task/repository/database_repository.dart';
-import 'package:task/repository/interface/idatabase.dart';
+import 'package:trellocards/model/cardModel.dart';
+import 'package:trellocards/repository/database_repository.dart';
+import 'package:trellocards/repository/interface/idatabase.dart';
 
 class DatabaseService extends IDatabase {
   DatabaseRepository databaseRepository = DatabaseRepository();

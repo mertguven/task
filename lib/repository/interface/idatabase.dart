@@ -1,4 +1,4 @@
-import 'package:task/model/cardModel.dart';
+import 'package:trellocards/model/cardModel.dart';
 
 abstract class IDatabase {
   Future open();

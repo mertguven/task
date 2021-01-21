@@ -1,7 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
-import 'package:task/model/cardModel.dart';
-import 'package:task/repository/interface/idatabase.dart';
+import 'package:trellocards/model/cardModel.dart';
+
+import 'interface/idatabase.dart';
 
 class DatabaseRepository extends IDatabase {
   String _dataBaseName = "card";
